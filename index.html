@@ -1,0 +1,3021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyPulse</title>
+
+<style>
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #020617, #031a2f);
+  color:#e5e7eb;
+}
+
+/* SCREENS */
+.screen{display:none;padding:20px}
+.screen.active{display:block}
+
+/* BUTTONS */
+button{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#1e293b;
+  color:white;
+  transition:0.2s;
+}
+
+button:hover{
+  background:#22d3ee;
+  color:black;
+}
+
+button:active{
+  transform:scale(0.96);
+}
+
+/* CONTENT CARD */
+.card{
+  margin-top:15px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(15,23,42,0.7);
+  backdrop-filter:blur(10px);
+  line-height:1.7;
+}
+
+/* TITLE */
+h1,h2,h3{
+  margin-top:0;
+}
+.topic-card {
+  background: rgba(255,255,255,0.05);
+  padding: 18px;
+  margin: 15px 0;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.topic-card h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+  color: #00d4ff;
+}
+
+.desc {
+  margin-bottom: 15px;
+  opacity: 0.85;
+}
+
+.section {
+  margin-top: 15px;
+}
+
+.section h3 {
+  margin-bottom: 8px;
+  color: #00ffaa;
+}
+
+.example-list {
+  padding-left: 18px;
+}
+
+.example-list li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.example-list span {
+  color: #bbb;
+  font-size: 13px;
+}
+
+.exercise {
+  background: rgba(0, 200, 255, 0.08);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.exercise ol {
+  padding-left: 18px;
+}
+
+.exercise li {
+  margin-bottom: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <h1>StudyPulse</h1>
+  <button onclick="showScreen('study')">Study</button>
+</div>
+
+<!-- STUDY -->
+<div id="study" class="screen">
+  <button onclick="showScreen('home')">Back</button>
+  <h2 id="study-title">Select Subject</h2>
+
+  <div id="topics"></div>
+
+  <div id="content" class="card">
+    Select a topic to begin
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   STUDY DATA (EXPANDED)
+========================= */
+
+const SUBJECTS = {
+
+  "Mathematics":[
+{
+title:"Trigonometry",
+content:`
+Trigonometry deals with relationships between angles and sides of triangles.
+
+Basic Ratios:
+sinθ = Opposite / Hypotenuse  
+cosθ = Adjacent / Hypotenuse  
+tanθ = Opposite / Adjacent  
+
+Example:
+If opposite = 3 and hypotenuse = 5  
+sinθ = 3/5  
+
+Important Values:
+sin 0° = 0  
+sin 30° = 1/2  
+sin 45° = √2/2  
+sin 90° = 1  
+
+Practical Example:
+A ladder leans against a wall forming a triangle. If the ladder is 10m long and the base is 6m from the wall, find the height.
+
+Using Pythagoras:
+height² + 6² = 10²  
+height² = 100 - 36 = 64  
+height = 8m  
+
+Exercises:
+1. Find cosθ if adjacent = 4 and hypotenuse = 5  
+2. Evaluate tan45°  
+3. Find height of triangle with hyp=13 and base=5
+`
+},
+
+{
+title:"Indices",
+content:`
+Indices involve powers and exponents.
+
+Laws:
+a^m × a^n = a^(m+n)  
+a^m ÷ a^n = a^(m-n)  
+(a^m)^n = a^(mn)  
+a^0 = 1  
+
+Example:
+2^3 × 2^4 = 2^7 = 128  
+
+Fractional Indices:
+a^(1/2) = √a  
+a^(1/3) = cube root  
+
+Example:
+16^(1/2) = 4  
+
+Exercises:
+1. Simplify 3^2 × 3^3  
+2. Evaluate 25^(1/2)  
+3. Simplify (2^3)^2
+`
+},
+
+{
+title:"Mensuration",
+content:`
+Mensuration deals with area and volume.
+
+Formulas:
+Area of circle = πr²  
+Circumference = 2πr  
+Volume of cube = a³  
+
+Example:
+Find area of circle with r = 7  
+Area = 22/7 × 7 × 7 = 154  
+
+Practical Example:
+A cylindrical tank radius 3m height 10m  
+Volume = πr²h = 3.14 × 9 × 10 = 282.6m³  
+
+Exercises:
+1. Find circumference when r=7  
+2. Find volume of cube of side 4  
+3. Find area of rectangle 5×8
+`
+},
+
+{
+title:"Algebra",
+content:`
+Algebra uses symbols and variables.
+
+Example:
+2x + 4 = 10  
+2x = 6  
+x = 3  
+
+Expansion:
+(a+b)(a-b) = a² - b²  
+
+Example:
+(x+2)(x+3) = x² + 5x + 6  
+
+Exercises:
+1. Solve 3x + 5 = 20  
+2. Expand (x+4)(x+2)  
+3. Factorize x² - 9
+`
+},
+
+{
+title:"Calculus",
+content:`
+Calculus deals with change.
+
+Differentiation:
+d/dx(x²) = 2x  
+d/dx(x³) = 3x²  
+
+Example:
+Find derivative of 5x²  
+= 10x  
+
+Integration:
+∫x dx = x²/2  
+
+Exercises:
+1. Differentiate x³  
+2. Find ∫2x dx  
+3. Find derivative of 4x²
+`
+},
+
+{
+title:"Statistics",
+content:`
+Statistics deals with data.
+
+Mean = Total / Number  
+
+Example:
+Numbers: 2,4,6  
+Mean = (2+4+6)/3 = 4  
+
+Mode = most frequent  
+Median = middle value  
+
+Exercises:
+1. Find mean of 5,10,15  
+2. Find median of 2,3,5,8  
+3. Identify mode in 2,2,3,4
+`
+},
+
+{
+title:"Matrix",
+content:`
+Matrix is a rectangular arrangement of numbers.
+
+Example:
+A = [1 2; 3 4]
+
+Addition:
+Add corresponding elements
+
+Example:
+[1 2] + [3 4] = [4 6]
+
+Exercises:
+1. Add matrices  
+2. Multiply simple matrices  
+3. Identify order of matrix
+`
+},
+
+{
+title:"Geometry",
+content:`
+Geometry deals with shapes.
+
+Triangle angles = 180°  
+
+Example:
+If two angles are 60° and 50°  
+Third = 70°  
+
+Exercises:
+1. Find missing angle  
+2. Calculate perimeter  
+3. Find area of triangle
+`
+},
+
+{
+title:"Quadratic Equation",
+content:`
+General form:
+ax² + bx + c = 0  
+
+Formula:
+x = (-b ± √(b² - 4ac)) / 2a  
+
+Example:
+x² - 5x + 6 = 0  
+(x-2)(x-3)=0  
+x=2 or 3  
+
+Exercises:
+1. Solve x² - 7x + 10  
+2. Use formula to solve x²+4x+3  
+3. Factorize x²-9
+`
+}
+],
+
+  "English":[
+{
+title:"Parts of Speech",
+content:`
+Parts of speech classify words by their function in a sentence.
+
+Examples:
+1. The diligent student completed the task. (diligent = adjective)
+2. She swiftly solved the problem. (swiftly = adverb)
+3. The committee has reached its decision. (committee = noun)
+4. He is exceptionally talented. (exceptionally = adverb)
+5. They arrived before noon. (before = preposition)
+6. Although it rained, we continued. (although = conjunction)
+7. Wow! That performance was outstanding. (wow = interjection)
+8. The book on the table is mine. (on = preposition)
+9. She considers him intelligent. (him = pronoun)
+10. Running improves health. (running = noun/gerund)
+
+Exercises:
+1. Identify parts of speech: "The intelligent boy speaks fluently"
+2. Classify each word in: "She quickly finished the assignment"
+3. Identify all verbs in a paragraph
+4. Replace nouns with pronouns appropriately
+5. Identify adjectives in a passage
+6. Rewrite sentence changing verb tense
+7. Identify conjunction types
+8. Analyze sentence structure grammatically
+9. Distinguish between adverb and adjective usage
+10. Construct sentence using at least 5 parts of speech
+`
+},
+
+{
+title:"Figures of Speech",
+content:`
+Figures of speech enhance expression.
+
+Examples:
+1. He is as cunning as a fox (Simile)
+2. The classroom was a zoo (Metaphor)
+3. The wind screamed in anger (Personification)
+4. I’ve told you a thousand times (Hyperbole)
+5. The silence was deafening (Oxymoron)
+6. Time flies quickly (Personification)
+7. She has a heart of stone (Metaphor)
+8. The news hit like a thunderbolt (Simile)
+9. He passed away (Euphemism)
+10. The crown decided (Metonymy)
+
+Exercises:
+1. Identify figure of speech in given sentences
+2. Construct 3 metaphors
+3. Convert simile to metaphor
+4. Identify irony in passage
+5. Create hyperbolic sentence
+6. Analyze figurative language in paragraph
+7. Write 5 personifications
+8. Differentiate metaphor vs simile
+9. Identify oxymoron examples
+10. Use 3 figures in one sentence
+`
+},
+
+{
+title:"Synonyms and Antonyms",
+content:`
+Synonyms = similar meanings
+Antonyms = opposite meanings
+
+Examples:
+1. Happy → Elated
+2. Sad → Melancholy
+3. Fast → Rapid
+4. Big → Immense
+5. Small → Minute
+6. Brave → Courageous
+7. Angry → Furious
+8. Calm → Serene
+9. Smart → Intelligent
+10. Poor → Destitute
+
+Exercises:
+1. Provide synonym for "difficult"
+2. Provide antonym for "increase"
+3. Replace word with advanced synonym
+4. Match synonyms correctly
+5. Identify incorrect synonym usage
+6. Use synonym in sentence
+7. Find antonym in passage
+8. Compare word intensity differences
+9. Rewrite paragraph using synonyms
+10. Choose best word for context
+`
+},
+
+{
+title:"Oral English",
+content:`
+Oral English focuses on pronunciation and phonetics.
+
+Examples:
+1. /θ/ → think
+2. /ð/ → this
+3. /ʃ/ → ship
+4. /tʃ/ → chair
+5. /i:/ → sheep
+6. /ɪ/ → ship
+7. /æ/ → cat
+8. /ʌ/ → cup
+9. Photograph vs Photography (stress shift)
+10. Record (noun) vs Record (verb)
+
+Exercises:
+1. Identify vowel sounds
+2. Transcribe words phonetically
+3. Identify stress patterns
+4. Distinguish minimal pairs
+5. Pronounce difficult consonants
+6. Analyze intonation patterns
+7. Practice syllable division
+8. Identify silent letters
+9. Compare vowel lengths
+10. Read passage with correct stress
+`
+},
+
+{
+title:"Diction",
+content:`
+Diction is proper word choice.
+
+Examples:
+1. Make a decision ✔
+2. Do a decision ✘
+3. Strong argument ✔
+4. Powerful tea ✘
+5. Heavy rain ✔
+6. Deep sleep ✔
+7. Commit a crime ✔
+8. Perform an operation ✔
+9. Take responsibility ✔
+10. Reach a conclusion ✔
+
+Exercises:
+1. Correct wrong diction
+2. Choose best word for context
+3. Rewrite sentence properly
+4. Identify awkward expression
+5. Improve word choice
+6. Replace informal words
+7. Use formal equivalents
+8. Edit paragraph diction
+9. Identify redundancy
+10. Improve clarity in writing
+`
+},
+
+{
+title:"Lexis and Structure",
+content:`
+Focus on vocabulary and sentence construction.
+
+Examples:
+1. She is going to school ✔
+2. She going school ✘
+3. If I were you ✔
+4. If I was you ✘
+5. He has finished his work ✔
+6. He finished his work already ✔
+7. The book which I bought ✔
+8. The book I bought ✔
+9. She neither came nor called ✔
+10. Either he or she is correct ✔
+
+Exercises:
+1. Correct sentence errors
+2. Identify sentence types
+3. Rewrite complex sentences
+4. Combine sentences
+5. Transform sentence forms
+6. Analyze grammatical structure
+7. Fill missing words
+8. Identify clause types
+9. Correct tense usage
+10. Construct complex sentences
+`
+},
+
+{
+title:"Concord",
+content:`
+Concord ensures subject-verb agreement.
+
+Examples:
+1. He runs ✔
+2. They run ✔
+3. The boy with friends is here ✔
+4. Neither John nor his friends are here ✔
+5. Everyone has arrived ✔
+6. Each student is responsible ✔
+7. A number of students are present ✔
+8. The number of students is high ✔
+9. Bread and butter is my breakfast ✔
+10. Mathematics is difficult ✔
+
+Exercises:
+1. Choose correct verb
+2. Correct agreement errors
+3. Identify subject correctly
+4. Rewrite sentence properly
+5. Analyze tricky concord cases
+6. Fill blanks with correct verb
+7. Identify singular/plural subjects
+8. Construct correct sentences
+9. Fix incorrect agreement
+10. Apply concord rules in paragraph
+`
+},
+
+{
+title:"Collocation",
+content:`
+Collocation = natural word pairing.
+
+Examples:
+1. Make a decision
+2. Do homework
+3. Take a risk
+4. Catch a bus
+5. Heavy rain
+6. Strong tea
+7. Fast food
+8. Pay attention
+9. Break a record
+10. Keep a promise
+
+Exercises:
+1. Choose correct collocation
+2. Identify incorrect pairing
+3. Fill blanks with correct phrase
+4. Match words correctly
+5. Use collocation in sentence
+6. Rewrite incorrect expressions
+7. Analyze text for collocations
+8. Replace weak combinations
+9. Build sentences with collocations
+10. Distinguish similar phrases
+`
+}
+],
+"physics ":[
+{
+title:"Motion",
+content:`
+Motion is the change in position of a body with time.
+
+Types of Motion:
+- Linear motion (straight line)
+- Circular motion
+- Oscillatory motion
+
+Key Quantities:
+Distance (m), Displacement (m)
+Speed (m/s), Velocity (m/s)
+Acceleration (m/s²)
+
+Formulas:
+Speed = Distance / Time
+Velocity = Displacement / Time
+Acceleration = (v - u) / t
+
+---
+
+EXAMPLES (Theory + Calculation):
+
+1. A car travels 100m in 10s  
+Speed = 100/10 = 10 m/s
+
+2. A body starts from rest (u=0), reaches 20m/s in 5s  
+Acceleration = (20 - 0)/5 = 4 m/s²
+
+3. A train moves 60m in 3s  
+Speed = 20 m/s
+
+4. A ball thrown upward slows down due to gravity  
+(Theory: acceleration due to gravity = -9.8 m/s²)
+
+5. A car accelerates from 10m/s to 30m/s in 5s  
+a = (30 - 10)/5 = 4 m/s²
+
+6. A runner covers 200m in 20s  
+Speed = 10 m/s
+
+7. A body moves with constant velocity  
+Acceleration = 0
+
+8. A cyclist slows from 15m/s to 5m/s in 5s  
+a = (5 - 15)/5 = -2 m/s²
+
+9. Distance travelled in uniform motion  
+d = vt
+
+10. A stone dropped freely  
+u = 0, v = gt
+
+11. If v = 20m/s, t = 4s  
+Distance = 80m
+
+12. Graph interpretation:
+Straight line → constant speed
+
+13. Area under velocity-time graph = distance
+
+14. Object at rest → speed = 0
+
+15. Relative motion:
+Two cars moving opposite direction increases relative speed
+
+---
+
+EXERCISES:
+
+1. Calculate speed if distance = 150m, time = 10s  
+2. Find acceleration: u=5m/s, v=25m/s, t=4s  
+3. A car moves 300m in 15s, find speed  
+4. A body accelerates from rest to 40m/s in 8s  
+5. Calculate distance: v=20m/s, t=6s  
+6. A cyclist slows from 20m/s to 10m/s in 5s  
+7. Define velocity and give example  
+8. Distinguish speed and velocity  
+9. Calculate acceleration if v=0, u=30, t=6  
+10. A train travels 500m in 25s  
+11. A stone falls freely for 3s (g=10m/s²), find velocity  
+12. Explain uniform motion  
+13. Plot simple distance-time graph  
+14. Calculate displacement from velocity  
+15. Explain acceleration with example
+`
+},
+{
+title:"Linear Momentum",
+content:`
+Linear momentum is the product of mass and velocity.
+
+Formula:
+Momentum (p) = mass (m) × velocity (v)
+
+Unit: kg·m/s
+
+Law of Conservation of Momentum:
+Total momentum before collision = total momentum after collision
+
+---
+
+EXAMPLES:
+
+1. A body of mass 2kg moving at 5m/s  
+p = 2 × 5 = 10 kgm/s
+
+2. Mass = 4kg, velocity = 3m/s  
+p = 12 kgm/s
+
+3. A stationary object has velocity = 0  
+Momentum = 0
+
+4. Two bodies collide and stick together → inelastic collision
+
+5. Bullet (0.02kg) at 200m/s  
+p = 4 kgm/s
+
+6. Recoil of a gun explained using momentum conservation
+
+7. If velocity doubles, momentum doubles
+
+8. Mass 10kg at rest → p = 0
+
+9. A truck (1000kg) at 10m/s  
+p = 10000 kgm/s
+
+10. Impulse = change in momentum
+
+11. If force acts for short time → impulse produced
+
+12. Momentum is a vector quantity
+
+13. Opposite directions → opposite momentum
+
+14. Collision example:
+m1v1 = m2v2 (if equal and opposite)
+
+15. Airbags reduce impact by increasing time
+
+---
+
+EXERCISES:
+
+1. Calculate momentum of 5kg body at 4m/s  
+2. Find velocity if p=20 kgm/s and m=5kg  
+3. Define impulse  
+4. Explain conservation of momentum  
+5. A 2kg object moves at 10m/s → find p  
+6. Why do guns recoil?  
+7. Calculate change in momentum  
+8. State unit of momentum  
+9. A body at rest → momentum?  
+10. Solve collision problem  
+11. Distinguish force and momentum  
+12. Define impulse formula  
+13. Explain safety devices  
+14. Calculate mass if p=50 and v=10  
+15. Describe elastic collision
+`
+},
+
+{
+title:"Waves",
+content:`
+Waves transfer energy without transferring matter.
+
+Types:
+- Mechanical waves
+- Electromagnetic waves
+
+Key Terms:
+Wavelength (λ), Frequency (f), Velocity (v)
+
+Formula:
+v = fλ
+
+---
+
+EXAMPLES:
+
+1. f=5Hz, λ=2m → v=10m/s  
+2. Water waves spread energy  
+3. Sound travels through air  
+4. Light is electromagnetic  
+5. Radio waves used in communication  
+6. Echo is reflection of sound  
+7. Wave speed increases in solids  
+8. Frequency inversely proportional to wavelength  
+9. v=300m/s, f=100Hz → λ=3m  
+10. Transverse vs longitudinal waves  
+11. Sound cannot travel in vacuum  
+12. Light travels in vacuum  
+13. Reflection of waves  
+14. Refraction of waves  
+15. Diffraction through openings
+
+---
+
+EXERCISES:
+
+1. Calculate wave speed if f=10Hz, λ=5m  
+2. Define wavelength  
+3. Differentiate transverse and longitudinal waves  
+4. Explain echo  
+5. Calculate λ if v=20 and f=4  
+6. State wave properties  
+7. Explain reflection  
+8. Define frequency  
+9. Identify wave types  
+10. Sound in vacuum?  
+11. Calculate speed  
+12. Define diffraction  
+13. Give examples of waves  
+14. Explain refraction  
+15. State uses of waves
+`
+},
+
+{
+title:"Heat Transfer",
+content:`
+Heat is energy transferred due to temperature difference.
+
+Modes:
+- Conduction
+- Convection
+- Radiation
+
+---
+
+EXAMPLES:
+
+1. Metal rod gets hot → conduction  
+2. Boiling water circulates → convection  
+3. Sun heats Earth → radiation  
+4. Black surfaces absorb heat  
+5. Shiny surfaces reflect heat  
+6. Insulators reduce heat loss  
+7. Conduction faster in metals  
+8. Heat flows hot → cold  
+9. Vacuum flask reduces heat transfer  
+10. Wind currents due to convection  
+11. Cooking involves heat transfer  
+12. Radiation needs no medium  
+13. Ice melts due to heat  
+14. Temperature rise increases kinetic energy  
+15. Thermos prevents heat loss
+
+---
+
+EXERCISES:
+
+1. Define heat  
+2. Explain conduction  
+3. Give examples of convection  
+4. Why is radiation important?  
+5. Compare conduction and convection  
+6. Explain insulation  
+7. Identify heat transfer types  
+8. Why metals conduct heat?  
+9. Explain thermos flask  
+10. Define radiation  
+11. Heat flow direction?  
+12. Give real-life example  
+13. State applications  
+14. Explain temperature effect  
+15. Describe heat loss prevention
+`
+},
+
+{
+title:"Electric Field",
+content:`
+Electric field is the region where electric force acts.
+
+Formula:
+E = F/q
+
+---
+
+EXAMPLES:
+
+1. Charge produces field  
+2. Positive charges repel  
+3. Negative charges attract  
+4. Field lines show direction  
+5. Stronger field → closer lines  
+6. E = 10N/C  
+7. Charge in field experiences force  
+8. Uniform electric field between plates  
+9. Field direction outward from positive  
+10. Electric force acts at distance  
+11. Charges create potential difference  
+12. Field strength varies  
+13. Coulomb's law applies  
+14. Field depends on charge  
+15. Applications in capacitors
+
+---
+
+EXERCISES:
+
+1. Define electric field  
+2. Calculate E if F=20N and q=2C  
+3. Describe field lines  
+4. Explain attraction/repulsion  
+5. State unit of E  
+6. Draw field diagram  
+7. Define Coulomb law  
+8. Calculate force  
+9. Explain electric potential  
+10. Describe uniform field  
+11. Identify field direction  
+12. Compare fields  
+13. Explain applications  
+14. Solve simple problems  
+15. State properties
+`
+},
+
+{
+title:"Work, Energy and Power",
+content:`
+Work is done when force moves an object.
+
+Work = Force × Distance  
+Energy = ability to do work  
+Power = Work / Time  
+
+---
+
+EXAMPLES:
+
+1. Force=10N, distance=5m → Work=50J  
+2. Energy stored in battery  
+3. Kinetic energy = ½mv²  
+4. Potential energy = mgh  
+5. Power = 100J/10s = 10W  
+6. Moving car has kinetic energy  
+7. Lifted object has potential energy  
+8. Work done lifting load  
+9. Electrical power usage  
+10. Efficiency = useful/total  
+11. Machines reduce effort  
+12. Energy conversion  
+13. Work done = 0 if no movement  
+14. Energy conserved  
+15. Power measures rate
+
+---
+
+EXERCISES:
+
+1. Calculate work done  
+2. Define energy  
+3. Calculate power  
+4. Find kinetic energy  
+5. Find potential energy  
+6. Define efficiency  
+7. Work done formula?  
+8. Calculate force  
+9. Explain energy types  
+10. Define power  
+11. Solve energy problem  
+12. State unit  
+13. Describe energy conversion  
+14. Compare work and energy  
+15. Calculate time
+`
+},
+{
+title:"Projectile Motion",
+content:`
+Projectile motion is motion under gravity after being projected.
+
+Key formulas:
+Range R = (u² sin2θ)/g  
+Time T = (2u sinθ)/g  
+Max height H = (u² sin²θ)/(2g)
+
+---
+
+EXAMPLES:
+
+1. u=20m/s, θ=30° → calculate range  
+2. Time of flight for vertical throw  
+3. Ball thrown horizontally falls due to gravity  
+4. Velocity has horizontal and vertical components  
+5. Horizontal velocity remains constant  
+6. Vertical motion is uniformly accelerated  
+7. At highest point, vertical velocity = 0  
+8. Range is maximum at 45°  
+9. Two angles give same range  
+10. Path is parabolic  
+11. g = 10m/s² approx  
+12. Independent motion principle  
+13. Air resistance neglected  
+14. Vertical motion obeys kinematics  
+15. Used in sports
+
+---
+
+EXERCISES:
+
+1. Calculate range if u=10m/s, θ=45°  
+2. Find time of flight  
+3. Define projectile  
+4. Explain trajectory  
+5. Calculate max height  
+6. Why is motion parabolic?  
+7. Explain independence of motion  
+8. Solve vertical motion problem  
+9. Define range  
+10. Effect of angle  
+11. Calculate horizontal velocity  
+12. State assumptions  
+13. Compare angles  
+14. Draw path  
+15. Solve numerical
+`
+},
+
+{
+title:"Temperature and Conversion",
+content:`
+Temperature measures degree of hotness.
+
+Scales:
+Celsius, Kelvin, Fahrenheit
+
+Conversion:
+K = C + 273  
+F = (9/5)C + 32  
+
+---
+
+EXAMPLES:
+
+1. 0°C = 273K  
+2. 100°C = 373K  
+3. 32°F = 0°C  
+4. Convert 25°C to K → 298K  
+5. Convert 50°C to F  
+6. Boiling point of water = 100°C  
+7. Absolute zero = -273°C  
+8. Temperature affects volume  
+9. Used in thermometers  
+10. Heat vs temperature difference  
+11. Gas expansion with heat  
+12. Kelvin is SI unit  
+13. Temperature increases kinetic energy  
+14. Clinical thermometer usage  
+15. Calibration points
+
+---
+
+EXERCISES:
+
+1. Convert 30°C to K  
+2. Convert 68°F to °C  
+3. Define temperature  
+4. State SI unit  
+5. Convert 100°C to F  
+6. Explain thermometer  
+7. Define absolute zero  
+8. Compare scales  
+9. Solve conversion problems  
+10. Describe calibration  
+11. Why Kelvin scale?  
+12. Temperature vs heat  
+13. Practical uses  
+14. Solve equation  
+15. Identify scale
+`
+},
+
+{
+title:"Friction",
+content:`
+Friction opposes motion between surfaces.
+
+Types:
+Static, kinetic, rolling
+
+---
+
+EXAMPLES:
+
+1. Walking requires friction  
+2. Brakes use friction  
+3. Oil reduces friction  
+4. Rough surfaces increase friction  
+5. Air resistance is friction  
+6. Friction produces heat  
+7. Static friction prevents slipping  
+8. Kinetic friction during motion  
+9. Rolling friction least  
+10. Lubricants reduce wear  
+11. Tires designed for grip  
+12. Friction depends on surface  
+13. Increases with force  
+14. Can be useful or harmful  
+15. Used in machines
+
+---
+
+EXERCISES:
+
+1. Define friction  
+2. Types of friction  
+3. Advantages of friction  
+4. Disadvantages  
+5. Reduce friction methods  
+6. Explain lubrication  
+7. Compare friction types  
+8. Give examples  
+9. Solve simple problems  
+10. Describe applications  
+11. Effect of roughness  
+12. Why friction produces heat  
+13. Role in motion  
+14. Identify friction type  
+15. Practical uses
+`
+},
+
+{
+title:"Magnetic Field",
+content:`
+Magnetic field is region around magnet where force acts.
+
+---
+
+EXAMPLES:
+
+1. Field lines around magnet  
+2. Like poles repel  
+3. Unlike poles attract  
+4. Field strongest at poles  
+5. Compass shows direction  
+6. Earth acts as magnet  
+7. Electromagnets use current  
+8. Magnetic materials: iron, nickel  
+9. Field lines never cross  
+10. Magnetic force at distance  
+11. Used in motors  
+12. Used in generators  
+13. Field direction north to south  
+14. Stronger field → dense lines  
+15. Magnetic shielding
+
+---
+
+EXERCISES:
+
+1. Define magnetic field  
+2. Draw field lines  
+3. State properties  
+4. Explain magnetism  
+5. Compare poles  
+6. Describe Earth magnetism  
+7. Identify materials  
+8. Explain electromagnet  
+9. Applications  
+10. Field strength  
+11. Solve concept problems  
+12. Explain compass  
+13. Magnetic uses  
+14. Compare electric field  
+15. Practical examples
+`
+},
+
+{
+title:"Simple AC Circuit",
+content:`
+AC = Alternating current changes direction.
+
+---
+
+EXAMPLES:
+
+1. Household electricity is AC  
+2. Voltage alternates  
+3. Frequency = 50Hz  
+4. AC used in power transmission  
+5. RMS value used  
+6. Transformers use AC  
+7. Sine wave representation  
+8. AC vs DC  
+9. Efficient for long distances  
+10. Used in appliances  
+11. Voltage changes with time  
+12. Current reverses direction  
+13. Electrical safety important  
+14. Power supply systems  
+15. AC generators
+
+---
+
+EXERCISES:
+
+1. Define AC  
+2. Difference AC vs DC  
+3. State frequency  
+4. Explain RMS  
+5. Uses of AC  
+6. Draw waveform  
+7. Identify advantages  
+8. Explain transmission  
+9. Define voltage  
+10. Applications  
+11. Compare currents  
+12. Solve basic problems  
+13. Explain generator  
+14. Practical uses  
+15. Safety measures
+`
+},
+
+{
+title:"Nuclear Physics",
+content:`
+Deals with atomic nucleus.
+
+---
+
+EXAMPLES:
+
+1. Radioactive decay  
+2. Alpha particles  
+3. Beta particles  
+4. Gamma rays  
+5. Nuclear fission  
+6. Nuclear fusion  
+7. Uranium used  
+8. Energy release large  
+9. Radiation harmful  
+10. Used in medicine  
+11. Nuclear reactors  
+12. Atomic structure  
+13. Isotopes  
+14. Stability of nucleus  
+15. Applications
+
+---
+
+EXERCISES:
+
+1. Define nucleus  
+2. Types of radiation  
+3. Compare alpha beta gamma  
+4. Define fission  
+5. Define fusion  
+6. Applications  
+7. Risks of radiation  
+8. Identify isotopes  
+9. Nuclear reactions  
+10. Uses in medicine  
+11. Energy calculations  
+12. Radiation safety  
+13. Compare processes  
+14. Practical uses  
+15. Explain decay
+`
+},
+
+{
+title:"Half-life",
+content:`
+Half-life = time for half substance to decay.
+
+---
+
+EXAMPLES:
+
+1. 100g → 50g after one half-life  
+2. 50g → 25g after two  
+3. Decay exponential  
+4. Used in dating fossils  
+5. Constant for each element  
+6. Radioactive materials decay  
+7. Graph exponential  
+8. Used in medicine  
+9. Carbon dating  
+10. Half-life varies  
+11. Stability decreases  
+12. Nuclear decay law  
+13. Predict remaining mass  
+14. Time calculation  
+15. Practical uses
+
+---
+
+EXERCISES:
+
+1. Define half-life  
+2. Calculate remaining mass  
+3. Solve decay problems  
+4. Graph decay  
+5. Identify half-life  
+6. Explain exponential decay  
+7. Calculate time  
+8. Real-life application  
+9. Compare substances  
+10. Solve numerical  
+11. Explain decay law  
+12. Practical uses  
+13. Predict outcomes  
+14. Calculate percentage  
+15. Analyze data
+`
+},
+
+{
+title:"Electrolysis",
+content:`
+Electrolysis is chemical decomposition using electricity.
+
+---
+
+EXAMPLES:
+
+1. Water splits into hydrogen and oxygen  
+2. Electrodes used  
+3. Anode positive  
+4. Cathode negative  
+5. Electrolyte conducts  
+6. Copper plating  
+7. Faraday’s laws  
+8. Chemical change occurs  
+9. Ions move  
+10. Industrial uses  
+11. Metal extraction  
+12. Charge transfer  
+13. Gas produced  
+14. Solutions conduct  
+15. Applications
+
+---
+
+EXERCISES:
+
+1. Define electrolysis  
+2. Identify electrodes  
+3. State Faraday laws  
+4. Describe process  
+5. Calculate charge  
+6. Practical uses  
+7. Identify products  
+8. Explain ions  
+9. Solve problems  
+10. Describe experiment  
+11. Compare processes  
+12. Industrial uses  
+13. Safety measures  
+14. Calculate mass  
+15. Applications
+`
+},
+
+{
+title:"Elasticity",
+content:`
+Elasticity is ability to return to shape.
+
+Hooke’s Law:
+Force ∝ extension
+
+---
+
+EXAMPLES:
+
+1. Spring stretches  
+2. Rubber returns shape  
+3. Elastic limit  
+4. Stress and strain  
+5. Hooke’s law applies  
+6. Extension proportional  
+7. Used in materials  
+8. Breaking point  
+9. Young modulus  
+10. Elastic materials  
+11. Plastic deformation  
+12. Engineering uses  
+13. Measuring extension  
+14. Spring balance  
+15. Energy stored
+
+---
+
+EXERCISES:
+
+1. Define elasticity  
+2. State Hooke’s law  
+3. Calculate extension  
+4. Define stress  
+5. Define strain  
+6. Explain elastic limit  
+7. Solve problems  
+8. Practical uses  
+9. Compare materials  
+10. Graph force-extension  
+11. Identify deformation  
+12. Engineering application  
+13. Calculate modulus  
+14. Explain energy storage  
+15. Real-life examples
+`
+}
+],
+  "Chemistry":[
+{
+title:"Matter (Elements, Compounds, Mixtures)",
+content:`
+Matter is anything that has mass and occupies space.
+
+Types:
+- Element: Pure substance (e.g. Oxygen)
+- Compound: Chemically combined (e.g. H₂O)
+- Mixture: Physically combined (e.g. sand + salt)
+
+---
+
+EXAMPLES:
+
+1. Oxygen → element  
+2. Water → compound  
+3. Air → mixture  
+4. Salt solution → mixture  
+5. Iron → element  
+6. CO₂ → compound  
+7. Oil + water → mixture  
+8. Gold → element  
+9. Sugar solution → mixture  
+10. NaCl → compound  
+11. Brass → mixture (alloy)  
+12. Hydrogen gas → element  
+13. Vinegar → mixture  
+14. Alcohol → compound  
+15. Soil → mixture  
+
+---
+
+EXERCISES:
+
+1. Define matter  
+2. Differentiate element and compound  
+3. Classify air  
+4. Give examples of mixtures  
+5. Define compound  
+6. Explain physical combination  
+7. State properties of elements  
+8. Distinguish homogeneous vs heterogeneous  
+9. Identify substances  
+10. Explain alloy  
+11. Classify water  
+12. Give real-life examples  
+13. Explain separation methods  
+14. State characteristics  
+15. Compare types
+`
+},
+
+{
+title:"Atomic Structure (Discrete Nature of Matter)",
+content:`
+Matter is made of atoms.
+
+Subatomic particles:
+- Proton (+)
+- Neutron (0)
+- Electron (-)
+
+Atomic number = protons  
+Mass number = protons + neutrons  
+
+---
+
+EXAMPLES:
+
+1. Hydrogen → 1 proton  
+2. Carbon → 6 protons  
+3. Oxygen → 8 electrons  
+4. Sodium → atomic number 11  
+5. Mass number example  
+6. Neutron = mass - atomic number  
+7. Electron shells  
+8. Valence electrons  
+9. Isotopes  
+10. Ion formation  
+11. Electron configuration  
+12. Noble gases stable  
+13. Charge balance  
+14. Atomic radius concept  
+15. Periodic trends  
+
+---
+
+EXERCISES:
+
+1. Define atom  
+2. State particles  
+3. Calculate neutrons  
+4. Define atomic number  
+5. Explain isotopes  
+6. Write electron config  
+7. Identify valence electrons  
+8. Compare ions  
+9. Define shell  
+10. Solve atomic problems  
+11. Explain stability  
+12. Calculate mass number  
+13. Describe atom model  
+14. Identify element  
+15. Explain bonding basics
+`
+},
+
+{
+title:"Solubility",
+content:`
+Solubility is the ability of a substance to dissolve.
+
+Factors:
+- Temperature
+- Pressure
+- Nature of solute/solvent
+
+---
+
+EXAMPLES:
+
+1. Sugar dissolves in water  
+2. Salt dissolves in water  
+3. Oil does not dissolve  
+4. Solubility increases with temperature  
+5. Gas solubility decreases with heat  
+6. Pressure affects gases  
+7. Saturated solution  
+8. Unsaturated solution  
+9. Supersaturated solution  
+10. Solubility curve  
+11. Crystallization  
+12. Precipitation  
+13. Solvent polarity  
+14. Solute particles  
+15. Real-life dissolving  
+
+---
+
+EXERCISES:
+
+1. Define solubility  
+2. Explain saturation  
+3. Factors affecting solubility  
+4. Give examples  
+5. Define solvent  
+6. Draw solubility curve  
+7. Explain precipitation  
+8. Compare solutions  
+9. Solve problems  
+10. Identify types  
+11. Explain temperature effect  
+12. Describe gas solubility  
+13. Define crystallization  
+14. Real-life uses  
+15. Analyze solutions
+`
+},
+
+{
+title:"Stoichiometry",
+content:`
+Stoichiometry deals with quantitative chemical calculations.
+
+---
+
+EXAMPLES:
+
+1. Balanced equation: H₂ + O₂ → H₂O  
+2. Mole concept  
+3. 1 mole = 6.02×10²³ particles  
+4. Mass calculations  
+5. Volume of gases  
+6. Molar mass  
+7. Limiting reagent  
+8. Percentage yield  
+9. Empirical formula  
+10. Molecular formula  
+11. Gas laws relation  
+12. Reaction ratios  
+13. Unit conversions  
+14. Chemical equations  
+15. Mass conservation  
+
+---
+
+EXERCISES:
+
+1. Define mole  
+2. Calculate molar mass  
+3. Balance equations  
+4. Find limiting reagent  
+5. Calculate yield  
+6. Solve mole problems  
+7. Convert mass to moles  
+8. Define empirical formula  
+9. Calculate volume  
+10. Solve stoichiometry  
+11. Explain ratios  
+12. Apply gas law  
+13. Analyze reactions  
+14. Solve real problems  
+15. Chemical calculations
+`
+},
+
+{
+title:"Organic Chemistry (1 & 2)",
+content:`
+Organic chemistry studies carbon compounds.
+
+---
+
+EXAMPLES:
+
+1. Methane (CH₄)  
+2. Ethane (C₂H₆)  
+3. Alcohols (ethanol)  
+4. Carboxylic acids  
+5. Hydrocarbons  
+6. Alkanes  
+7. Alkenes  
+8. Alkynes  
+9. Functional groups  
+10. Isomerism  
+11. Polymerization  
+12. Combustion reactions  
+13. Organic reactions  
+14. Fuels  
+15. Carbon bonding  
+
+---
+
+EXERCISES:
+
+1. Define organic chemistry  
+2. Name hydrocarbons  
+3. Identify functional groups  
+4. Write formulas  
+5. Explain isomerism  
+6. Solve reactions  
+7. Describe alkanes  
+8. Compare compounds  
+9. Define polymerization  
+10. Give examples  
+11. Explain bonding  
+12. Identify structures  
+13. Reaction types  
+14. Real-life uses  
+15. Analyze compounds
+`
+},
+{
+title:"Periodic Table",
+content:`
+The periodic table arranges elements based on atomic number.
+
+Groups: vertical columns  
+Periods: horizontal rows  
+
+---
+
+EXAMPLES:
+
+1. Group 1 → Alkali metals  
+2. Group 7 → Halogens  
+3. Group 8 → Noble gases  
+4. Atomic number increases across period  
+5. Reactivity increases down Group 1  
+6. Atomic radius increases down group  
+7. Ionization energy trends  
+8. Metals on left  
+9. Non-metals on right  
+10. Transition metals in middle  
+11. Similar properties in groups  
+12. Valence electrons determine reactivity  
+13. Noble gases stable  
+14. Period trends  
+15. Classification of elements  
+
+---
+
+EXERCISES:
+
+1. Define periodic table  
+2. Explain group vs period  
+3. Identify element positions  
+4. Describe trends  
+5. State properties of metals  
+6. Compare groups  
+7. Explain reactivity  
+8. Define atomic radius  
+9. Identify noble gases  
+10. Solve classification problems  
+11. Explain periodic law  
+12. Compare metals and non-metals  
+13. Predict properties  
+14. Describe trends  
+15. Analyze table
+`
+},
+
+{
+title:"Gas Laws (Boyle, Charles, Avogadro, Ideal Gas)",
+content:`
+Gas laws describe behavior of gases.
+
+Boyle’s Law: P ∝ 1/V  
+Charles Law: V ∝ T  
+Avogadro Law: V ∝ n  
+Ideal Gas: PV = nRT  
+
+---
+
+EXAMPLES:
+
+1. Boyle: doubling pressure halves volume  
+2. Charles: heating gas increases volume  
+3. Avogadro: more gas → larger volume  
+4. PV = nRT calculations  
+5. P=2atm, V=3L → constant  
+6. T increase → V increase  
+7. Real-life balloons expand  
+8. Gas compression  
+9. Temperature in Kelvin  
+10. Solve PV=nRT  
+11. STP conditions  
+12. Volume ratios  
+13. Combined gas law  
+14. Pressure units  
+15. Real gases vs ideal  
+
+---
+
+EXERCISES:
+
+1. State Boyle’s law  
+2. Solve PV problems  
+3. Convert temperature to Kelvin  
+4. Calculate volume changes  
+5. Define ideal gas  
+6. Solve gas equation  
+7. Compare laws  
+8. Explain relationships  
+9. Solve pressure problems  
+10. Define STP  
+11. Calculate moles  
+12. Identify variables  
+13. Solve numerical  
+14. Describe behavior  
+15. Apply laws
+`
+},
+
+{
+title:"Metals and Their Compounds",
+content:`
+Metals are electropositive elements.
+
+---
+
+EXAMPLES:
+
+1. Iron used in construction  
+2. Copper conducts electricity  
+3. Sodium reacts with water  
+4. Aluminium lightweight  
+5. Metals form cations  
+6. Corrosion of iron  
+7. Extraction methods  
+8. Metal oxides basic  
+9. Reaction with acids  
+10. Alloys improve strength  
+11. Electrolysis extraction  
+12. Uses in industry  
+13. Metal reactivity series  
+14. Thermal conductivity  
+15. Electrical conductivity  
+
+---
+
+EXERCISES:
+
+1. Define metals  
+2. List properties  
+3. Explain corrosion  
+4. Describe extraction  
+5. Compare metals  
+6. Give uses  
+7. Explain reactivity  
+8. Identify compounds  
+9. Solve problems  
+10. Describe alloys  
+11. State reactions  
+12. Explain conductivity  
+13. Compare metals  
+14. Real-life uses  
+15. Identify properties
+`
+},
+
+{
+title:"Non-metals and Their Compounds",
+content:`
+Non-metals gain electrons.
+
+---
+
+EXAMPLES:
+
+1. Oxygen supports combustion  
+2. Nitrogen inert  
+3. Chlorine disinfectant  
+4. Sulfur forms acids  
+5. Non-metals poor conductors  
+6. Form covalent bonds  
+7. Acidic oxides  
+8. Used in fertilizers  
+9. Hydrogen gas  
+10. Carbon compounds  
+11. Halogens reactive  
+12. Low melting points  
+13. Brittle solids  
+14. Insulators  
+15. Biological importance  
+
+---
+
+EXERCISES:
+
+1. Define non-metals  
+2. List properties  
+3. Compare metals  
+4. Explain bonding  
+5. Identify compounds  
+6. Describe uses  
+7. Solve problems  
+8. Explain reactivity  
+9. Identify elements  
+10. Compare properties  
+11. Explain acids  
+12. Real-life uses  
+13. Classify elements  
+14. State reactions  
+15. Analyze properties
+`
+},
+
+{
+title:"Electrolysis (Detailed)",
+content:`
+Electrolysis uses electricity to decompose substances.
+
+Faraday’s Law:
+Mass ∝ charge
+
+---
+
+EXAMPLES:
+
+1. Copper plating  
+2. Water electrolysis  
+3. Cathode reduction  
+4. Anode oxidation  
+5. Ion movement  
+6. Gas production  
+7. Mass calculation  
+8. Industrial extraction  
+9. Charge flow  
+10. Electrodes  
+11. Faraday constant  
+12. Solutions conduct  
+13. Molten electrolysis  
+14. Practical uses  
+15. Reaction equations  
+
+---
+
+EXERCISES:
+
+1. Define electrolysis  
+2. State laws  
+3. Calculate mass  
+4. Identify products  
+5. Describe setup  
+6. Solve numerical  
+7. Explain ions  
+8. Compare processes  
+9. Industrial uses  
+10. Identify electrodes  
+11. Calculate charge  
+12. Describe reactions  
+13. Explain oxidation/reduction  
+14. Practical uses  
+15. Analyze experiment
+`
+},
+
+{
+title:"Titration",
+content:`
+Titration determines concentration.
+
+---
+
+EXAMPLES:
+
+1. Acid-base titration  
+2. Indicator changes color  
+3. End point detection  
+4. Burette measurements  
+5. Volume calculations  
+6. Standard solution  
+7. Neutralization  
+8. pH concept  
+9. Accurate readings  
+10. Lab setup  
+11. Repeated trials  
+12. Concordant values  
+13. Chemical equations  
+14. Practical chemistry  
+15. Analytical use  
+
+---
+
+EXERCISES:
+
+1. Define titration  
+2. Explain procedure  
+3. Calculate concentration  
+4. Identify indicator  
+5. Solve volume problems  
+6. Describe endpoint  
+7. Analyze results  
+8. Explain errors  
+9. Solve equations  
+10. Lab setup  
+11. Calculate molarity  
+12. Real-life use  
+13. Practice calculations  
+14. Compare methods  
+15. Evaluate results
+`
+},
+
+{
+title:"Redox Reactions",
+content:`
+Redox involves oxidation and reduction.
+
+---
+
+EXAMPLES:
+
+1. Oxidation = loss of electrons  
+2. Reduction = gain of electrons  
+3. Rusting of iron  
+4. Combustion reactions  
+5. Battery reactions  
+6. Electron transfer  
+7. Oxidizing agents  
+8. Reducing agents  
+9. Chemical equations  
+10. Industrial processes  
+11. Corrosion  
+12. Energy production  
+13. Electrochemical cells  
+14. Reaction balancing  
+15. Real-life reactions  
+
+---
+
+EXERCISES:
+
+1. Define oxidation  
+2. Define reduction  
+3. Identify agents  
+4. Balance equations  
+5. Solve redox problems  
+6. Explain rusting  
+7. Compare reactions  
+8. Identify electron transfer  
+9. Real-life examples  
+10. Solve equations  
+11. Analyze reactions  
+12. Identify oxidation states  
+13. Compare processes  
+14. Describe applications  
+15. Practice calculations
+`
+},
+
+{
+title:"Chemical Equilibrium",
+content:`
+Equilibrium occurs when forward = backward reaction.
+
+---
+
+EXAMPLES:
+
+1. Dynamic equilibrium  
+2. Reversible reactions  
+3. Le Chatelier’s principle  
+4. Effect of temperature  
+5. Effect of pressure  
+6. Concentration changes  
+7. Equilibrium constant  
+8. Industrial processes  
+9. Haber process  
+10. Shift in equilibrium  
+11. Reaction rates  
+12. Closed system  
+13. Catalysts effect  
+14. Chemical balance  
+15. Stability conditions  
+
+---
+
+EXERCISES:
+
+1. Define equilibrium  
+2. Explain principle  
+3. Predict shifts  
+4. Solve equilibrium problems  
+5. Describe reversible reaction  
+6. Analyze system  
+7. Calculate constants  
+8. Explain temperature effect  
+9. Compare reactions  
+10. Identify factors  
+11. Apply principles  
+12. Industrial examples  
+13. Solve equations  
+14. Evaluate conditions  
+15. Describe system
+`
+}
+],
+
+  "Biology":[
+{
+title:"Cell and its Environment",
+content:`
+The cell is the structural and functional unit of life.
+
+STRUCTURE:
+- Cell membrane (controls movement in/out)
+- Cytoplasm (site of reactions)
+- Nucleus (controls activities, contains DNA)
+
+FUNCTIONS:
+- Metabolism
+- Growth
+- Reproduction
+- Response to stimuli
+
+CELL ENVIRONMENT:
+Includes surrounding fluid affecting exchange.
+
+TRANSPORT MECHANISMS:
+1. Diffusion → movement from high to low concentration
+2. Osmosis → movement of water across semi-permeable membrane
+3. Active transport → requires energy (ATP)
+
+---
+
+EXAMPLES:
+
+1. Oxygen diffuses into cells for respiration  
+2. CO₂ diffuses out as waste  
+3. Water enters plant cells → turgidity  
+4. Red blood cells burst in distilled water (osmosis)  
+5. Cells shrink in concentrated salt solution  
+6. Root hairs absorb water by osmosis  
+7. Active transport absorbs minerals in roots  
+8. Glucose enters cells via facilitated diffusion  
+9. Cell membrane regulates ions  
+10. Kidney cells reabsorb substances actively  
+11. Diffusion in lungs (gas exchange)  
+12. Osmoregulation in organisms  
+13. Turgor pressure supports plants  
+14. Dialysis tubing experiment (osmosis)  
+15. Concentration gradient drives movement  
+
+---
+
+EXERCISES:
+
+1. Define cell  
+2. List cell organelles and functions  
+3. Explain diffusion with example  
+4. Describe osmosis experiment  
+5. Distinguish active vs passive transport  
+6. Explain cell membrane function  
+7. Describe effects of hypotonic solution  
+8. Describe hypertonic solution effect  
+9. Explain facilitated diffusion  
+10. State importance of osmosis  
+11. Compare plant and animal cells  
+12. Explain role of nucleus  
+13. Draw labeled cell  
+14. Explain cell environment  
+15. Solve transport-related questions  
+`
+},
+
+{
+title:"Transport System (Plants & Animals)",
+content:`
+Transport systems move materials within organisms.
+
+IN ANIMALS:
+Blood transports:
+- Oxygen
+- Nutrients
+- Hormones
+- Waste products
+
+HEART FUNCTION:
+Pumps blood through arteries, veins, capillaries
+
+IN PLANTS:
+- Xylem → transports water/minerals upward
+- Phloem → transports food
+
+---
+
+FUNCTIONAL MECHANISM:
+
+1. Double circulation in humans  
+2. Transpiration pull in plants  
+3. Root pressure assists movement  
+4. Capillary action in xylem  
+5. Pressure flow hypothesis (phloem)
+
+---
+
+EXAMPLES:
+
+1. Oxygen transported by haemoglobin  
+2. Nutrients absorbed in intestine → blood  
+3. CO₂ transported to lungs  
+4. Heart beats pump blood  
+5. Arteries carry blood away  
+6. Veins return blood  
+7. Capillaries exchange materials  
+8. Water moves up xylem  
+9. Sugar transported in phloem  
+10. Transpiration causes water loss  
+11. Root pressure pushes water  
+12. Guard cells control stomata  
+13. Blood clotting prevents loss  
+14. Pulse rate increases during exercise  
+15. Circulatory diseases affect transport  
+
+---
+
+EXERCISES:
+
+1. Define transport system  
+2. Draw heart and label  
+3. Explain double circulation  
+4. Distinguish arteries vs veins  
+5. Explain transpiration  
+6. Describe xylem function  
+7. Describe phloem function  
+8. Explain pressure flow theory  
+9. Identify blood components  
+10. Explain gas transport  
+11. Solve diagram questions  
+12. Describe root pressure  
+13. Explain capillary action  
+14. State functions of blood  
+15. Analyze transport disorders  
+`
+},
+
+{
+title:"Photosynthesis",
+content:`
+Photosynthesis is the process by which green plants manufacture food.
+
+Equation:
+6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂ (in presence of light and chlorophyll)
+
+---
+
+PROCESS:
+
+1. Light reaction → produces ATP and NADPH  
+2. Dark reaction (Calvin cycle) → forms glucose  
+
+---
+
+FUNCTIONS:
+
+- Produces food  
+- Releases oxygen  
+- Stores energy  
+
+---
+
+EXAMPLES:
+
+1. Plants use sunlight  
+2. Leaves contain chlorophyll  
+3. CO₂ enters through stomata  
+4. Water absorbed by roots  
+5. Oxygen released  
+6. Glucose stored as starch  
+7. Photosynthesis in chloroplast  
+8. Rate increases with light  
+9. Rate affected by CO₂  
+10. Temperature affects enzymes  
+11. Limiting factors concept  
+12. Shade plants vs sun plants  
+13. Aquatic plants photosynthesize  
+14. Experiments with iodine test  
+15. Starch test confirms process  
+
+---
+
+EXERCISES:
+
+1. Define photosynthesis  
+2. Write equation  
+3. Explain light reaction  
+4. Explain dark reaction  
+5. State factors affecting rate  
+6. Describe experiment to test starch  
+7. Explain role of chlorophyll  
+8. Define limiting factors  
+9. Compare respiration vs photosynthesis  
+10. Explain energy conversion  
+11. Draw diagram of leaf  
+12. Identify products  
+13. Solve concept questions  
+14. Explain importance  
+15. Analyze environmental effects  
+`
+},
+{
+title:"Genetics and Heredity",
+content:`
+Genetics is the study of inheritance, while heredity explains how traits are passed from parents to offspring.
+
+KEY TERMS:
+- Gene: unit of inheritance
+- Allele: different forms of a gene
+- Genotype: genetic makeup
+- Phenotype: observable trait
+
+HOW IT WORKS (MECHANISM):
+
+1. Genes are located on chromosomes inside the nucleus  
+2. During reproduction, gametes (sperm & egg) carry half the genetic information  
+3. Fertilization restores full chromosome number  
+4. Traits are expressed depending on dominant/recessive alleles  
+
+MENDELIAN INHERITANCE:
+- Dominant allele masks recessive  
+- Law of segregation → alleles separate during gamete formation  
+
+---
+
+EXAMPLES (WITH FUNCTION + USES):
+
+1. Eye colour inheritance  
+→ Brown (dominant) overrides blue (recessive)  
+→ Function: determines physical traits  
+→ Use: genetic prediction in families  
+
+2. Blood group inheritance (ABO system)  
+→ Controlled by multiple alleles  
+→ Function: determines compatibility  
+→ Use: blood transfusion safety  
+
+3. Sickle cell inheritance  
+→ Recessive gene causes disease  
+→ Function: affects red blood cells  
+→ Use: genetic counseling  
+
+4. Sex determination (XY system)  
+→ Male = XY, Female = XX  
+→ Function: determines gender  
+→ Use: population studies  
+
+5. Tongue rolling trait  
+→ Dominant genetic trait  
+→ Function: simple inheritance model  
+→ Use: teaching genetics  
+
+6. Albinism  
+→ Lack of melanin production  
+→ Function: affects skin/eye colour  
+→ Use: medical genetics  
+
+7. Height variation  
+→ Polygenic inheritance  
+→ Function: controlled by many genes  
+→ Use: growth studies  
+
+8. Hybrid crosses  
+→ Crossing different genotypes  
+→ Function: produces variation  
+→ Use: agriculture breeding  
+
+9. Pure breeding  
+→ Homozygous parents  
+→ Function: stable traits  
+→ Use: crop improvement  
+
+10. Mutation  
+→ Sudden gene change  
+→ Function: introduces variation  
+→ Use: evolution studies  
+
+11. Genetic diseases  
+→ Passed through genes  
+→ Function: affects health  
+→ Use: diagnosis  
+
+12. Dominant disorders  
+→ Expressed if one allele present  
+→ Use: medical prediction  
+
+13. Recessive disorders  
+→ Require two alleles  
+→ Use: screening  
+
+14. Gene expression  
+→ DNA → protein synthesis  
+→ Function: controls traits  
+
+15. Environmental influence  
+→ Genes + environment interact  
+→ Use: understanding development  
+
+---
+
+EXERCISES:
+
+1. Define gene and allele  
+2. Differentiate genotype vs phenotype  
+3. Explain Mendel’s law  
+4. Solve monohybrid cross  
+5. Draw Punnett square  
+6. Explain dominant vs recessive  
+7. Define mutation  
+8. Explain inheritance of blood groups  
+9. Solve genetic ratio problems  
+10. Describe sex determination  
+11. Explain genetic variation  
+12. Identify genotype from phenotype  
+13. Compare inherited vs acquired traits  
+14. Analyze pedigree chart  
+15. Apply genetics to real-life problems  
+`
+},
+
+{
+title:"Reproductive System (Humans & Plants)",
+content:`
+Reproduction is the process of producing new individuals.
+
+TYPES:
+- Sexual reproduction
+- Asexual reproduction
+
+---
+
+HUMAN REPRODUCTION (HOW IT WORKS):
+
+1. Male produces sperm in testes  
+2. Female produces ova in ovaries  
+3. Fertilization occurs in fallopian tube  
+4. Zygote forms and divides  
+5. Embryo implants in uterus  
+6. Development continues until birth  
+
+---
+
+PLANT REPRODUCTION:
+
+- Pollination → transfer of pollen  
+- Fertilization → fusion of gametes  
+- Seed formation → embryo develops  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Fertilization  
+→ Fusion of sperm and egg  
+→ Function: creates new organism  
+→ Use: reproduction  
+
+2. Menstrual cycle  
+→ Hormonal regulation  
+→ Function: prepares uterus  
+→ Use: fertility tracking  
+
+3. Pollination by insects  
+→ Transfer of pollen  
+→ Function: ensures reproduction  
+→ Use: agriculture  
+
+4. Wind pollination  
+→ Light pollen spread  
+→ Use: crop reproduction  
+
+5. Germination  
+→ Seed grows into plant  
+→ Function: plant development  
+→ Use: farming  
+
+6. Asexual reproduction (binary fission)  
+→ Rapid reproduction  
+→ Use: bacteria growth  
+
+7. Vegetative propagation  
+→ New plant from part  
+→ Use: cloning plants  
+
+8. IVF (In vitro fertilization)  
+→ Artificial fertilization  
+→ Use: fertility treatment  
+
+9. Flower structure  
+→ Contains reproductive organs  
+→ Use: plant reproduction  
+
+10. Ovulation  
+→ Egg release  
+→ Use: reproduction timing  
+
+11. Embryo development  
+→ Growth stages  
+→ Use: medical study  
+
+12. Placenta function  
+→ Exchange nutrients  
+→ Use: fetal survival  
+
+13. Hormones (estrogen/testosterone)  
+→ Control reproduction  
+→ Use: development  
+
+14. Seed dispersal  
+→ Spread plants  
+→ Use: survival  
+
+15. Reproductive health  
+→ Disease prevention  
+→ Use: human wellbeing  
+
+---
+
+EXERCISES:
+
+1. Define reproduction  
+2. Explain fertilization  
+3. Describe menstrual cycle  
+4. Compare sexual vs asexual  
+5. Explain pollination types  
+6. Describe seed formation  
+7. Draw reproductive system  
+8. Explain IVF  
+9. Identify reproductive organs  
+10. Explain hormone roles  
+11. Compare plant vs animal reproduction  
+12. Describe germination  
+13. Solve reproduction questions  
+14. Explain placenta function  
+15. Analyze reproductive health  
+`
+},
+
+{
+title:"Ecology and Ecosystem",
+content:`
+Ecology studies interactions between organisms and environment.
+
+LEVELS:
+- Organism → Population → Community → Ecosystem  
+
+---
+
+HOW IT WORKS:
+
+1. Energy flows through food chains  
+2. Producers → Consumers → Decomposers  
+3. Nutrients recycled  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Food chain  
+→ Grass → Goat → Lion  
+→ Function: energy transfer  
+→ Use: ecosystem balance  
+
+2. Food web  
+→ Complex feeding relationships  
+→ Use: ecological stability  
+
+3. Producers (plants)  
+→ Make food  
+→ Use: energy source  
+
+4. Consumers  
+→ Eat plants/animals  
+→ Use: energy transfer  
+
+5. Decomposers  
+→ Break down dead matter  
+→ Use: nutrient recycling  
+
+6. Habitat  
+→ Living environment  
+→ Use: species survival  
+
+7. Niche  
+→ Role of organism  
+→ Use: ecological balance  
+
+8. Population growth  
+→ Increase in organisms  
+→ Use: study dynamics  
+
+9. Carrying capacity  
+→ Max population supported  
+→ Use: resource management  
+
+10. Pollution  
+→ Harmful substances  
+→ Use: environmental studies  
+
+11. Adaptation  
+→ Survival mechanism  
+→ Use: evolution  
+
+12. Biotic factors  
+→ Living components  
+13. Abiotic factors  
+→ Non-living components  
+14. Energy pyramid  
+→ Shows energy loss  
+15. Conservation  
+→ Protect environment  
+
+---
+
+EXERCISES:
+
+1. Define ecology  
+2. Explain food chain  
+3. Draw food web  
+4. Define ecosystem  
+5. Identify producers  
+6. Explain decomposers  
+7. Describe pollution  
+8. Define habitat  
+9. Explain adaptation  
+10. Solve ecological problems  
+11. Describe energy flow  
+12. Compare ecosystems  
+13. Analyze population growth  
+14. Explain conservation  
+15. Identify factors  
+`
+},
+{
+title:"Digestive System (Alimentary Canal of Man)",
+content:`
+The digestive system breaks down food into absorbable nutrients and distributes them to the body.
+
+---
+
+STRUCTURE (ALIMENTARY CANAL):
+
+Mouth → Oesophagus → Stomach → Small Intestine → Large Intestine → Rectum → Anus
+
+---
+
+LABELLED DIAGRAM (TEXT FORMAT):
+
+Mouth (teeth + tongue)
+↓
+Oesophagus (peristalsis movement)
+↓
+Stomach (acid + enzymes)
+↓
+Small intestine (duodenum, ileum)
+↓
+Large intestine (water absorption)
+↓
+Rectum → Anus
+
+---
+
+HOW IT WORKS (FUNCTIONAL MECHANISM):
+
+1. Ingestion → food enters mouth  
+2. Digestion → mechanical (chewing) + chemical (enzymes)  
+3. Absorption → nutrients absorbed in small intestine (villi)  
+4. Assimilation → nutrients used by cells  
+5. Egestion → waste removed  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Salivary amylase breaks starch → maltose  
+→ Function: begins digestion  
+→ Use: energy production  
+
+2. Hydrochloric acid in stomach kills bacteria  
+→ Function: protection  
+→ Use: prevents infection  
+
+3. Pepsin digests protein → peptides  
+→ Use: growth and repair  
+
+4. Peristalsis moves food along canal  
+→ Function: transport  
+→ Use: ensures digestion flow  
+
+5. Bile emulsifies fats  
+→ Function: increases surface area  
+→ Use: efficient fat digestion  
+
+6. Pancreatic enzymes digest all nutrients  
+→ Use: complete digestion  
+
+7. Villi absorb nutrients  
+→ Function: increase surface area  
+→ Use: efficient absorption  
+
+8. Large intestine absorbs water  
+→ Use: prevents dehydration  
+
+9. Rectum stores faeces  
+→ Function: waste control  
+
+10. Enzymes act specifically  
+→ Use: controlled digestion  
+
+11. Liver produces bile  
+→ Use: fat digestion  
+
+12. Teeth types (incisors, canines)  
+→ Function: food breakdown  
+
+13. Tongue aids swallowing  
+→ Function: digestion  
+
+14. Hormones regulate digestion  
+→ Use: coordination  
+
+15. Balanced diet supports digestion  
+→ Use: health maintenance  
+
+---
+
+EXAM-LEVEL QUESTIONS:
+
+1. Describe the digestive process from ingestion to egestion  
+2. Explain the role of enzymes in digestion  
+3. Draw and label the digestive system  
+4. Explain how villi are adapted for absorption  
+5. Compare mechanical and chemical digestion  
+6. Explain the role of bile in fat digestion  
+7. Describe peristalsis and its importance  
+8. Identify enzymes and their functions  
+9. Explain how digestion supports metabolism  
+10. Describe effects of poor digestion  
+11. Analyze enzyme deficiency effects  
+12. Explain nutrient absorption mechanism  
+13. Compare digestion in humans vs animals  
+14. Discuss importance of balanced diet  
+15. Solve applied digestion problems  
+`
+},
+
+{
+title:"Respiration (Cellular and Breathing)",
+content:`
+Respiration is the release of energy from food.
+
+TYPES:
+- Aerobic respiration (with oxygen)
+- Anaerobic respiration (without oxygen)
+
+---
+
+EQUATION:
+Glucose + Oxygen → CO₂ + Water + Energy (ATP)
+
+---
+
+LABELLED DIAGRAM (TEXT FORMAT):
+
+Nose → Trachea → Bronchi → Lungs → Alveoli
+
+---
+
+HOW IT WORKS:
+
+1. Air enters through nose  
+2. Travels to lungs  
+3. Oxygen diffuses into blood at alveoli  
+4. Blood transports oxygen to cells  
+5. Cells release energy through respiration  
+6. CO₂ removed via lungs  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Oxygen enters alveoli  
+→ Function: gas exchange  
+→ Use: energy production  
+
+2. Haemoglobin carries oxygen  
+→ Use: transport  
+
+3. Aerobic respiration produces high energy  
+→ Use: body activities  
+
+4. Anaerobic respiration produces lactic acid  
+→ Use: short energy bursts  
+
+5. Breathing rate increases during exercise  
+→ Use: meet oxygen demand  
+
+6. Diffusion in lungs  
+→ Function: gas exchange  
+
+7. Mitochondria produce ATP  
+→ Use: energy supply  
+
+8. CO₂ removal prevents toxicity  
+→ Use: maintain balance  
+
+9. Lung surface area increases efficiency  
+10. Diaphragm movement aids breathing  
+11. Respiration fuels metabolism  
+12. Energy used in muscle contraction  
+13. Oxygen debt concept  
+14. Controlled by brain  
+15. Ventilation process  
+
+---
+
+EXAM-LEVEL QUESTIONS:
+
+1. Define respiration  
+2. Differentiate aerobic and anaerobic respiration  
+3. Describe gas exchange in lungs  
+4. Draw respiratory system  
+5. Explain role of haemoglobin  
+6. Describe ATP production  
+7. Explain oxygen debt  
+8. Analyze breathing mechanism  
+9. Compare respiration types  
+10. Explain importance of respiration  
+11. Describe alveoli adaptation  
+12. Solve respiration equations  
+13. Explain energy production  
+14. Describe effects of lack of oxygen  
+15. Apply respiration knowledge  
+`
+},
+
+{
+title:"Microorganisms",
+content:`
+Microorganisms are tiny organisms seen only with a microscope.
+
+Types:
+- Bacteria
+- Viruses
+- Fungi
+- Protozoa
+
+---
+
+HOW THEY FUNCTION:
+
+1. Some cause diseases  
+2. Some help digestion  
+3. Some decompose matter  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Bacteria in gut aid digestion  
+→ Use: nutrient absorption  
+
+2. Yeast used in baking  
+→ Use: fermentation  
+
+3. Lactobacillus produces yoghurt  
+→ Use: food production  
+
+4. Pathogenic bacteria cause disease  
+→ Use: medical study  
+
+5. Viruses infect cells  
+→ Use: vaccine research  
+
+6. Fungi decompose organic matter  
+→ Use: recycling nutrients  
+
+7. Antibiotics kill bacteria  
+→ Use: medicine  
+
+8. Nitrogen-fixing bacteria enrich soil  
+→ Use: agriculture  
+
+9. Protozoa cause malaria  
+→ Use: disease control  
+
+10. Microbes in sewage treatment  
+→ Use: sanitation  
+
+11. Industrial fermentation  
+12. Food preservation  
+13. Biological research  
+14. Vaccine production  
+15. Environmental cleaning  
+
+---
+
+EXAM-LEVEL QUESTIONS:
+
+1. Define microorganisms  
+2. Classify types  
+3. Explain beneficial uses  
+4. Describe harmful effects  
+5. Explain fermentation  
+6. Describe disease transmission  
+7. Explain antibiotics  
+8. Compare bacteria and viruses  
+9. Identify microorganisms  
+10. Explain role in ecosystem  
+11. Analyze infection control  
+12. Explain immunity  
+13. Describe industrial uses  
+14. Compare microbes  
+15. Apply microbiology knowledge  
+`
+},
+
+{
+title:"Evolution and Adaptation",
+content:`
+Evolution is gradual change in organisms over time.
+
+Adaptation helps organisms survive.
+
+---
+
+HOW IT WORKS:
+
+1. Variation exists in population  
+2. Natural selection favors best traits  
+3. Survivors reproduce  
+4. Traits passed to offspring  
+
+---
+
+EXAMPLES (FUNCTION + USES):
+
+1. Camouflage in animals  
+→ Function: avoid predators  
+→ Use: survival  
+
+2. Giraffe long neck  
+→ Use: feeding advantage  
+
+3. Antibiotic resistance  
+→ Function: survival of bacteria  
+
+4. Thick fur in cold regions  
+→ Use: insulation  
+
+5. Desert plants reduce water loss  
+→ Use: survival  
+
+6. Bird beak variation  
+→ Use: feeding  
+
+7. Darwin’s finches  
+→ Use: evolution study  
+
+8. Human evolution  
+→ Use: scientific research  
+
+9. Adaptation to environment  
+10. Survival of fittest  
+11. Natural selection  
+12. Mutation introduces variation  
+13. Artificial selection  
+14. Fossil evidence  
+15. Evolution explains biodiversity  
+
+---
+
+EXAM-LEVEL QUESTIONS:
+
+1. Define evolution  
+2. Explain natural selection  
+3. Describe adaptation  
+4. Give examples  
+5. Explain Darwin’s theory  
+6. Analyze survival traits  
+7. Compare adaptation types  
+8. Explain mutation role  
+9. Describe fossil evidence  
+10. Apply evolution concepts  
+11. Explain biodiversity  
+12. Compare artificial selection  
+13. Describe environmental adaptation  
+14. Analyze evolutionary changes  
+15. Solve concept questions  
+`
+}
+]
+
+};
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  if(id === "study") loadSubjects();
+}
+
+
+/* =========================
+   LOAD SUBJECTS
+========================= */
+
+function loadSubjects(){
+  let container = document.getElementById('topics');
+  container.innerHTML = '';
+
+  Object.keys(SUBJECTS).forEach(sub => {
+    let btn = document.createElement('button');
+    btn.textContent = sub;
+
+    btn.onclick = () => showTopics(sub);
+
+    container.appendChild(btn);
+  });
+}
+
+
+/* =========================
+   SHOW TOPICS
+========================= */
+
+function showTopics(sub){
+  document.getElementById('study-title').textContent = sub;
+
+  let container = document.getElementById('topics');
+  container.innerHTML = '';
+
+  SUBJECTS[sub].forEach(topic => {
+    let btn = document.createElement('button');
+    btn.textContent = topic.title;
+
+    btn.onclick = () => {
+      document.getElementById('content').innerHTML = topic.content;
+    };
+
+    container.appendChild(btn);
+  });
+}
+
+</script>
+
+</body>
+</html>
